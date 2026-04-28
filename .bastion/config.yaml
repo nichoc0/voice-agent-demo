@@ -1,0 +1,19 @@
+# Bastion project config
+# Docs: https://demo.pistonsolutions.ai/docs
+
+project: my-ai-app
+
+# Default scope to run when `bastion assessment` is invoked without a --scope flag.
+default_scope: default
+
+runtime:
+  # local  — spawn Claude Code on this machine via `claude -p`
+  # runner — POST probes to the hosted runner (no local Claude required, recommended for CI)
+  mode: runner
+  runner_url: https://bastion-runner.pistonsolutions.ai
+
+report:
+  # Push the report to Bastion's dashboard after each run.
+  upload: true
+  # Where to write the local JSON artifact.
+  artifact_dir: .bastion/runs

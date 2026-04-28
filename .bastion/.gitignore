@@ -1,0 +1,3 @@
+# Local credentials / fixtures Bastion may write here. Do NOT commit.
+credentials.json
+*.local.json

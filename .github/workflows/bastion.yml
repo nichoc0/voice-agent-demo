@@ -1,0 +1,50 @@
+name: Bastion Assessment
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  bastion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Start the voice agent
+        run: |
+          python3 agent.py --port 8088 &
+          for i in {1..15}; do
+            if curl -sf http://127.0.0.1:8088/v1/chat/completions -X POST \
+              -H "Content-Type: application/json" \
+              -d '{"model":"dummy","messages":[{"role":"user","content":"ping"}]}' >/dev/null 2>&1; then
+              echo "agent up"; exit 0
+            fi
+            sleep 1
+          done
+          echo "agent failed to start"; exit 1
+
+      - name: Install Bastion
+        run: npm i -g @pistonsolutions/bastion
+
+      - name: Run assessment
+        env:
+          BASTION_API_KEY: ${{ secrets.BASTION_API_KEY }}
+        run: bastion assessment --no-tui
+
+      - name: Upload run artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bastion-runs
+          path: .bastion/runs/
+          if-no-files-found: ignore
