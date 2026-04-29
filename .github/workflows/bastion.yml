@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+# Silence GitHub's Node.js 20 deprecation warning until v5 actions land.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   bastion:
     runs-on: ubuntu-latest
