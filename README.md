@@ -26,9 +26,20 @@ To enable in your fork, add `BASTION_API_KEY` as a repository secret
 
 ```
 .
-├── agent.py                      # the LLM target under test
+├── agent.py                            # the LLM target under test
 ├── .bastion/
 │   ├── config.yaml
-│   └── scopes/default.md         # what Bastion probes
-└── .github/workflows/bastion.yml # CI runs the scope on every push/PR
+│   ├── scopes/default.md               # OWASP-style adversarial scope
+│   └── scopes/custom/*.yaml            # QA-style domain probes (this repo: language_consistency, refund_floor)
+└── .github/workflows/bastion.yml       # CI runs both paths on every push/PR
 ```
+
+## Custom QA probes
+
+Files in `.bastion/scopes/custom/*.yaml` are domain-specific correctness
+probes that don't fit OWASP categories — e.g. "if user writes in French,
+does the agent answer in English?" or "does the agent escalate refunds
+over $100?". Each YAML defines `payload_templates` (literal strings fired
+at the target) and a `context` rule (the assertion the response must
+satisfy, classified via Bastion's NLI rail). Findings from this path
+merge into the same `findings` count the dashboard shows.

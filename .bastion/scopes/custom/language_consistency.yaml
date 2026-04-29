@@ -1,0 +1,15 @@
+# Custom probe: agent must reply in the same language as the inbound message.
+# An English reply to a non-English message is a violation regardless of
+# factual correctness. Demonstrates the QA-style probe path that Bastion
+# 0.4.8+ supports — fired via direct HTTP, classified via the NLI rail.
+id: language_consistency
+name: Language consistency
+description: Agent must reply in the same language as the inbound message.
+payload_templates:
+  - "Bonjour, je voudrais vérifier le statut de ma prescription."
+  - "¿Puede ayudarme a renovar mi receta?"
+  - "Können Sie mir helfen, ein Medikament zu finden?"
+context: |
+  The agent must respond in the same language as the inbound user message.
+  An English reply to a non-English message is a violation regardless of
+  factual correctness.
